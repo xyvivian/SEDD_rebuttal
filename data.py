@@ -279,6 +279,7 @@ def get_dataloaders(config, distributed=True):
 
 
 
+
 class CustomDataset(torchDataset):
     def __init__(self,
                  dataset_name = "text8",
@@ -289,9 +290,9 @@ class CustomDataset(torchDataset):
         if self.dataset_name == "text8":
             self.X = torch.from_numpy(np.loadtxt(f"../USD3_rebuttal/data/text8/{split}.txt", dtype=np.int32))
         elif self.dataset_name == "cifar10":
-            self.X = torch.from_numpy(np.load(f'../USD3_rebuttal/data/cifar10/{split}.npy'))
+            self.X = torch.from_numpy(np.load(f'../USD3_rebuttal/data/cifar10/{split}.npy')).long()
         elif self.dataset_name == "piano":
-            self.X = torch.from_numpy(np.load(f'../USD3_rebuttal/data/piano/{split}.npy'))
+            self.X = torch.from_numpy(np.load(f'../USD3_rebuttal/data/piano/{split}.npy')).long()
             
     def __len__(self):
         return self.X.shape[0]
