@@ -243,6 +243,22 @@ def get_dataloaders(config, distributed=True):
                                   batch_size=config.training.batch_size,
                                   drop_last=False))
         return train_loader,valid_loader
+    
+    elif config.dataset == 'text8':
+        train_set = CustomDataset(dataset_name='text8',split='train')
+        valid_set = CustomDataset(dataset_name='text8',split='valid')
+        train_loader = cycle_loader(DataLoader(dataset=train_set,
+                                  shuffle=True,
+                          num_workers=0,
+                          batch_size=config.training.batch_size,
+                          drop_last=False))
+        
+        valid_loader = cycle_loader(DataLoader(dataset=valid_set,
+                                  shuffle=False,
+                                  num_workers=0,
+                                  batch_size=config.training.batch_size,
+                                  drop_last=False))
+        return train_loader,valid_loader
 
     train_set = get_dataset(config.data.train, "train", cache_dir=config.data.cache_dir, block_size=config.model.length)
     valid_set = get_dataset(config.data.valid, "validation" if config.data.valid != "text8" else "test", cache_dir=config.data.cache_dir, block_size=config.model.length)
