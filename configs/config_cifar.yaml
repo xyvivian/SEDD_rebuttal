@@ -1,6 +1,6 @@
 defaults:
   - _self_
-  - model: small
+  - model: small_cifar
   - override hydra/launcher: submitit_slurm
 
 ngpus: 1
