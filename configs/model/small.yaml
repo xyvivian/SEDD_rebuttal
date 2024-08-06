@@ -1,7 +1,7 @@
 name: small
 type: ddit
 hidden_size: 768
-cond_dim: 256 #128
+cond_dim: 256 m#128
 length: 1024
 n_blocks: 12
 n_heads: 12

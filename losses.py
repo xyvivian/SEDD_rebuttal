@@ -6,7 +6,7 @@ import graph_lib
 from model import utils as mutils
 
 
-def get_loss_fn(noise, graph, train, sampling_eps=1e-3, lv=False):
+def get_loss_fn(noise, graph, train, sampling_eps=1e-3, lv=False,condition_dim=0):
 
     def loss_fn(model, batch, cond=None, t=None, perturbed_batch=None):
         """
@@ -20,14 +20,21 @@ def get_loss_fn(noise, graph, train, sampling_eps=1e-3, lv=False):
                 t = (1 - sampling_eps) * torch.rand(batch.shape[0], device=batch.device) + sampling_eps
             
         sigma, dsigma = noise(t)
-        
+        if condition_dim > 0 :
+            conditional_mask = torch.zeros_like(batch,dtype=torch.bool)
+            conditional_mask[:,:condition_dim] = True
+            
         if perturbed_batch is None:
             perturbed_batch = graph.sample_transition(batch, sigma[:, None])
+            if condition_dim >0:
+                perturbed_batch[conditional_mask] = batch[conditional_mask]
 
         log_score_fn = mutils.get_score_fn(model, train=train, sampling=False)
+        
         log_score = log_score_fn(perturbed_batch, sigma)
-        loss = graph.score_entropy(log_score, sigma[:, None], perturbed_batch, batch)
-
+        loss = graph.score_entropy(log_score, sigma[:, None], perturbed_batch, batch)      
+        if condition_dim > 0:
+            loss * (~conditional_mask)
         loss = (dsigma[:, None] * loss).sum(dim=-1)
 
         return loss
@@ -74,8 +81,8 @@ def optimization_manager(config):
     return optimize_fn
 
 
-def get_step_fn(noise, graph, train, optimize_fn, accum):
-    loss_fn = get_loss_fn(noise, graph, train)
+def get_step_fn(noise, graph, train, optimize_fn, accum,condition_dim=0):
+    loss_fn = get_loss_fn(noise, graph, train,condition_dim=condition_dim)
 
     accum_iter = 0
     total_loss = 0

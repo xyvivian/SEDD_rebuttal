@@ -130,8 +130,9 @@ def _run(rank, world_size, cfg):
 
     # Build one-step training and evaluation functions
     optimize_fn = losses.optimization_manager(cfg)
-    train_step_fn = losses.get_step_fn(noise, graph, True, optimize_fn, cfg.training.accum)
-    eval_step_fn = losses.get_step_fn(noise, graph, False, optimize_fn, cfg.training.accum)
+    print("Condtion dim is :", cfg.condition_dim)
+    train_step_fn = losses.get_step_fn(noise, graph, True, optimize_fn, cfg.training.accum,cfg.condition_dim)
+    eval_step_fn = losses.get_step_fn(noise, graph, False, optimize_fn, cfg.training.accum,cfg.condition_dim)
 
 
     if cfg.training.snapshot_sampling:

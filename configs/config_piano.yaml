@@ -15,7 +15,7 @@ training:
   eval_freq: 100
   snapshot_freq_for_preemption: 10000
   weight: standard
-  snapshot_sampling: True
+  snapshot_sampling: False
   ema: 0.9999
 
 data:
@@ -54,6 +54,7 @@ optim:
   grad_clip: 1.
 
 dataset: piano
+condition_dim: 32
 
 hydra:
   run:
